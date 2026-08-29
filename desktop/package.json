@@ -1,0 +1,87 @@
+{
+  "name": "daftar-sakhteman-desktop",
+  "productName": "دفتر ساختمان",
+  "version": "1.0.0",
+  "description": "نسخه دسکتاپ دفتر ساختمان — مدیریت مالی پروژه‌های ساخت‌وساز",
+  "main": "main.cjs",
+  "author": "دفتر ساختمان",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --enable-logging",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac",
+    "dist:linux": "electron-builder --linux",
+    "dist:all": "electron-builder -mw"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "electron-updater": "^6.3.9"
+  },
+  "build": {
+    "extends": null,
+    "appId": "ir.daftar.sakhteman",
+    "productName": "Daftar Sakhteman",
+    "artifactName": "${productName}-Setup-${version}.${ext}",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "offline.html",
+      "build/**/*"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "daftar-sakhteman-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "دفتر ساختمان",
+      "deleteAppDataOnUninstall": false,
+      "installerLanguages": ["en_US"],
+      "differentialPackage": true
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://YOUR-UPDATE-SERVER.com/daftar-desktop/"
+      }
+    ],
+    "portable": {
+      "artifactName": "daftar-sakhteman-${version}-portable.exe"
+    },
+    "mac": {
+      "target": [
+        { "target": "dmg", "arch": ["x64", "arm64"] },
+        { "target": "zip", "arch": ["x64", "arm64"] }
+      ],
+      "icon": "build/icon.png",
+      "category": "public.app-category.business",
+      "artifactName": "daftar-sakhteman-${version}-${arch}.${ext}"
+    },
+    "dmg": {
+      "title": "دفتر ساختمان ${version}"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "build/icon.png",
+      "category": "Office",
+      "maintainer": "daftar-sakhteman"
+    }
+  }
+}

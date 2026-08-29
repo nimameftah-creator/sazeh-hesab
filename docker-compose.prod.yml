@@ -1,0 +1,54 @@
+# ═══════════════════════════════════════════════════════════
+# دفتر ساختمان — اجرای کامل (برنامه + دیتابیس) با یک دستور
+# ═══════════════════════════════════════════════════════════
+#   بالا آوردن:   docker compose -f docker-compose.prod.yml up -d --build
+#   دیدن لاگ:     docker compose -f docker-compose.prod.yml logs -f app
+#   پایین آوردن:  docker compose -f docker-compose.prod.yml down
+#
+#   برنامه روی:   http://localhost:3000
+# ═══════════════════════════════════════════════════════════
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: daftar-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: app_db
+    volumes:
+      - daftar_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d app_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - daftar
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: daftar-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # داخل شبکه داکر، نام سرویس «db» به‌جای localhost استفاده می‌شود
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/app_db
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    networks:
+      - daftar
+
+volumes:
+  daftar_db_data:
+    driver: local
+
+networks:
+  daftar:
+    driver: bridge
