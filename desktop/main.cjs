@@ -4,7 +4,7 @@
  * آدرس سرور به سه روش تعیین می‌شود (به ترتیب اولویت):
  *   ۱) متغیر محیطی DAFTAR_APP_URL
  *   ۲) فایل تنظیمات ذخیره‌شده (از منوی «تغییر آدرس سرور» در برنامه)
- *   ۳) مقدار پیش‌فرض: http://localhost:3000
+ *   ۳) مقدار پیش‌فرض: http://localhost:4000
  *
  * یعنی برای عوض کردن آدرس سرور، نیازی به ساخت دوباره فایل نصبی نیست.
  */
@@ -14,7 +14,7 @@ const path = require("path");
 const fs = require("fs");
 
 const APP_NAME = "دفتر ساختمان";
-const DEFAULT_URL = "http://localhost:3000";
+const DEFAULT_URL = "http://localhost:4000";
 const OFFLINE_FILE = path.join(__dirname, "offline.html");
 
 /* ── به‌روزرسانی خودکار ─────────────────────────────────────
@@ -226,7 +226,7 @@ async function changeServerUrl() {
     message: "آدرس سرور برنامه را وارد کنید",
     detail:
       "اگر برنامه را روی همین کامپیوتر اجرا می‌کنی:\n" +
-      "    http://localhost:3000\n\n" +
+      "    http://localhost:4000\n\n" +
       "اگر روی سرور یا دامنه خودت است، همان آدرس را بنویس:\n" +
       "    https://my-domain.com\n\n" +
       "آدرس فعلی: " +
@@ -286,7 +286,7 @@ function promptUrl() {
       </style></head><body>
       <label>آدرس سرور برنامه</label>
       <input id="u" value="${url}" autofocus />
-      <div class="hint">برای اجرای محلی: http://localhost:3000</div>
+      <div class="hint">برای اجرای محلی: http://localhost:4000</div>
       <div class="row">
         <button class="no" onclick="window.close()">انصراف</button>
         <button class="ok" onclick="done()">ذخیره</button>

@@ -5,7 +5,7 @@
 #   دیدن لاگ:     docker compose -f docker-compose.prod.yml logs -f app
 #   پایین آوردن:  docker compose -f docker-compose.prod.yml down
 #
-#   برنامه روی:   http://localhost:3000
+#   برنامه روی:   http://localhost:4000
 # ═══════════════════════════════════════════════════════════
 
 services:
@@ -41,7 +41,7 @@ services:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/app_db
       NODE_ENV: production
     ports:
-      - "3000:3000"
+      - "4000:4000"
     networks:
       - daftar
 

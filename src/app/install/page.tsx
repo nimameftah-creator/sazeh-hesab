@@ -285,7 +285,7 @@ npx drizzle-kit push`}</CodeBlock>
 npm run build
 npm run start`}</CodeBlock>
           <p className="text-[13px] leading-7 text-slate-400">
-            حالا برنامه روی <span className={CODE}>http://localhost:3000</span> در دسترس است و
+            حالا برنامه روی <span className={CODE}>http://localhost:4000</span> در دسترس است و
             نسخه دسکتاپ هم به‌صورت پیش‌فرض به همان وصل می‌شود.
           </p>
           <div className="flex gap-3 rounded-xl border border-amber-400/25 bg-amber-500/10 p-3.5">

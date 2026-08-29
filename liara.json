@@ -1,7 +1,7 @@
 {
   "$schema": "https://cli.liara.ir/schema/v1/liara.json#",
-  "app": "daftar-sakhteman",
-  "port": 3000,
+  "app": "sazeh-hesab",
+  "port": 4000,
   "disks": [],
   "healthCheck": {
     "path": "/api/health",
