@@ -82,9 +82,27 @@ export async function GET(req: Request) {
         await db.execute(sql.raw(stmt));
         created++;
       } catch (e) {
-        // خطای تکراری بودن بی‌خطر است (اجرای دوم)
-        const msg = e instanceof Error ? e.message : String(e);
-        if (!/already exists|duplicate/i.test(msg)) errors.push(msg.slice(0, 160));
+        // drizzle پیام اصلی PostgreSQL را می‌پوشاند، پس چند لایه را می‌کاویم
+        const err = e as { message?: string; cause?: unknown };
+        const parts = [
+          err?.message ?? "",
+          err?.cause instanceof Error ? err.cause.message : "",
+          (() => {
+            try {
+              return JSON.stringify(e);
+            } catch {
+              return String(e);
+            }
+          })(),
+        ].join(" | ");
+
+        // «تکراری بودن» در اجرای دوم طبیعی است → بی‌خطر
+        const benign = /already exists|duplicate|42P07|42710/i.test(parts);
+        if (!benign) {
+          const detail =
+            err?.cause instanceof Error ? err.cause.message : err?.message ?? String(e);
+          errors.push(detail.slice(0, 160));
+        }
       }
     }
     rows.push(["دستورات SQL اجرا شده", String(created)]);
