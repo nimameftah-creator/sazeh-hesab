@@ -2,7 +2,7 @@
 # دفتر ساختمان — ایمیج تولید
 # ═══════════════════════════════════════════════════════════
 # ساخت:    docker build -t daftar-sakhteman .
-# اجرا:    docker run -p 4000:4000 --env-file .env daftar-sakhteman
+# اجرا:    docker run -p 4000:3000 --env-file .env daftar-sakhteman
 # ═══════════════════════════════════════════════════════════
 
 # ── مرحله ۱: نصب وابستگی‌ها ───────────────────────────────
@@ -24,7 +24,7 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=4000
+ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
 # کاربر غیر root برای امنیت
@@ -40,10 +40,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/next.config.ts ./next.config.ts
 COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
 
 USER nextjs
-EXPOSE 4000
+EXPOSE 3000
 
 # بررسی سلامت — اگر برنامه بالا نیامد، ارکستریتر می‌فهمد
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:4000/api/health || exit 1
+  CMD wget -qO- http://127.0.0.1:3000/api/health || exit 1
 
 CMD ["npm", "run", "start"]
