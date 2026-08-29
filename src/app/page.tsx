@@ -7,7 +7,8 @@ import { Card, CardHeader, Badge, Empty, ProgressRing, ShareRow } from "@/compon
 import {
   CashflowChart, Donut, ChequeTimeline, RankBar, BudgetGauge, Sparkline,
 } from "@/components/charts";
-import { accountBalances, decorateTx, loadAll, monthlySeries, projectFinancials } from "@/lib/finance";
+import { accountBalances, decorateTx, monthlySeries, projectFinancials } from "@/lib/finance";
+import { safeLoad } from "@/lib/safe-load";
 import { chequeAlerts, chequeTimeline, groupBy, monthlyTotals, partyLedger, stageReport } from "@/lib/analytics";
 import { fmtCompact, fmtMoney, fmtNumber } from "@/lib/format";
 import { formatJalali, jalaliMonthLabel, todayISO } from "@/lib/jalali";
@@ -15,7 +16,67 @@ import { formatJalali, jalaliMonthLabel, todayISO } from "@/lib/jalali";
 export const dynamic = "force-dynamic";
 
 export default async function Dashboard() {
-  const data = await loadAll();
+  const result = await safeLoad();
+
+  // ---------- اگر دیتابیس آماده نیست، راهنمای دقیق نشان بده ----------
+  if (!result.ok) {
+    const icons: Record<string, string> = {
+      no_env: "🔑",
+      conn_failed: "🔌",
+      no_tables: "🗄️",
+      partial_tables: "🧩",
+      query_failed: "⚠️",
+    };
+    const titles: Record<string, string> = {
+      no_env: "متغیر دیتابیس تنظیم نشده",
+      conn_failed: "اتصال به دیتابیس برقرار نیست",
+      no_tables: "دیتابیس هنوز آماده نیست",
+      partial_tables: "ساختار دیتابیس ناقص است",
+      query_failed: "خطا در خواندن داده‌ها",
+    };
+    return (
+      <div className="mx-auto max-w-2xl py-8">
+        <Card className="p-6 md:p-8">
+          <div className="flex items-start gap-4">
+            <span className="text-4xl">{icons[result.code]}</span>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl font-extrabold text-slate-700">{titles[result.code]}</h1>
+              <p className="mt-2 text-[13.5px] leading-7 text-slate-500">{result.message}</p>
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-xl border border-amber-400/25 bg-amber-500/10 p-4">
+            <p className="text-[13px] font-bold text-amber-400">🔧 راه‌حل</p>
+            <p className="mt-2 whitespace-pre-line text-[13px] leading-7 text-slate-500">
+              {result.hint}
+            </p>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            <a
+              href="/api/diagnose"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-l from-emerald-500 to-teal-600 px-4 py-2.5 text-[13px] font-medium text-white shadow-lg shadow-emerald-900/30 hover:brightness-110"
+            >
+              🔍 تشخیص کامل
+            </a>
+            <a
+              href="/api/setup?key=daftar-1404"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300/70 px-4 py-2.5 text-[13px] text-slate-500 hover:border-emerald-500/50 hover:text-emerald-300"
+            >
+              ⚙️ اجرای راه‌اندازی
+            </a>
+          </div>
+
+          <p className="mt-5 text-[12.5px] leading-7 text-slate-400">
+            بعد از انجام راه‌حل، این صفحه را دوباره بارگذاری کن. اگر مشکل حل نشد، متن همین
+            صفحه را برای پشتیبانی بفرست — علت دقیق در آن نوشته شده است.
+          </p>
+        </Card>
+      </div>
+    );
+  }
+
+  const data = result.data;
 
   // ---------- حالت خالی: راهنمای شروع ----------
   const isEmpty = data.projs.length === 0 && data.accts.length === 0 && data.txs.length === 0;
